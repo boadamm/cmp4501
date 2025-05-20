@@ -1,0 +1,5 @@
+Metadata-Version: 2.4
+Name: cmp4501
+Version: 0.0.0
+Summary: CMP-4501 Part-1 algorithms
+Requires-Dist: numpy>=1.26
