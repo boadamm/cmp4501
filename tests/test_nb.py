@@ -3,6 +3,7 @@ from naive_bayes.model import MultinomialNB
 
 MIN_ACCURACY_NB = 0.90
 
+
 def test_multinomial_nb():
     X_tr, y_tr, X_te, y_te = load_fake_news()
     clf = MultinomialNB(alpha=1.0).fit(X_tr, y_tr)

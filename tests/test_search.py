@@ -138,7 +138,7 @@ def test_cost_search_skip_suboptimal_path():
     graph.add_edge("S", "B")
     graph.add_edge("A", "G")
     graph.add_edge("B", "G")
-    graph.add_edge("S", "G") # Direct but higher cost initially in frontier
+    graph.add_edge("S", "G")  # Direct but higher cost initially in frontier
 
     # UCS Test
     # S->A (1), S->B (1), A->G (1), B->G(100)
@@ -146,13 +146,19 @@ def test_cost_search_skip_suboptimal_path():
     # We want to ensure S->A->G (cost 2) is chosen over S->G (cost 10)
     # and also that if G is reached via S->B->G (cost 101) it's ignored
     # if S->A->G (2) found
-    costs_ucs = {("S","A"):1, ("S","B"):1, ("A","G"):1, ("B","G"):100, ("S","G"):10}
+    costs_ucs = {
+        ("S", "A"): 1,
+        ("S", "B"): 1,
+        ("A", "G"): 1,
+        ("B", "G"): 100,
+        ("S", "G"): 10,
+    }
     # Symmetric for graph.py's undirected edges
-    for (u,v),c in list(costs_ucs.items()):
-        costs_ucs[(v,u)] = c
+    for (u, v), c in list(costs_ucs.items()):
+        costs_ucs[(v, u)] = c
 
     def cost_fn_ucs(n1, n2):
-        return costs_ucs.get((n1,n2), float('inf'))
+        return costs_ucs.get((n1, n2), float("inf"))
 
     path_ucs = ucs(graph, "S", "G", cost_fn_ucs)
     assert path_ucs == ["S", "A", "G"]
@@ -171,17 +177,23 @@ def test_cost_search_skip_suboptimal_path():
     # G: cost S->A->G = 1+1=2. h(G,G)=0. Total = 2. Push (2+0, 2, G, [S,A,G])
     # Path [S,A,G] should be found.
     # The continue should be hit for the S->G path if explored later.
-    costs_astar = {("S","A"):1, ("S","B"):1, ("A","G"):1, ("B","G"):1, ("S","G"):10}
-    for (u,v),c in list(costs_astar.items()):
-        costs_astar[(v,u)] = c
+    costs_astar = {
+        ("S", "A"): 1,
+        ("S", "B"): 1,
+        ("A", "G"): 1,
+        ("B", "G"): 1,
+        ("S", "G"): 10,
+    }
+    for (u, v), c in list(costs_astar.items()):
+        costs_astar[(v, u)] = c
 
     def cost_fn_astar(n1, n2):
-        return costs_astar.get((n1,n2), float('inf'))
+        return costs_astar.get((n1, n2), float("inf"))
 
-    def heuristic_fn_astar(n,g):
+    def heuristic_fn_astar(n, g):
         # Heuristic values for A* an example
-        heuristic_values = {"S":1, "A":0, "B":10, "G":0}
-        return heuristic_values.get(n, float('inf'))
+        heuristic_values = {"S": 1, "A": 0, "B": 10, "G": 0}
+        return heuristic_values.get(n, float("inf"))
 
     path_astar = a_star(graph, "S", "G", cost_fn_astar, heuristic_fn_astar)
     assert path_astar == ["S", "A", "G"]
@@ -207,13 +219,19 @@ def test_search_complex_graph_ucs_astar():
     # We want to ensure S->A->G (cost 2) is chosen over S->G (cost 10)
     # and also that if G is reached via S->B->G (cost 101) it's ignored
     # if S->A->G (2) found
-    costs_ucs = {("S","A"):1, ("S","B"):1, ("A","G"):1, ("B","G"):100, ("S","G"):10}
+    costs_ucs = {
+        ("S", "A"): 1,
+        ("S", "B"): 1,
+        ("A", "G"): 1,
+        ("B", "G"): 100,
+        ("S", "G"): 10,
+    }
     # Symmetric for graph.py's undirected edges
-    for (u,v),c in list(costs_ucs.items()):
-        costs_ucs[(v,u)] = c
+    for (u, v), c in list(costs_ucs.items()):
+        costs_ucs[(v, u)] = c
 
     def cost_fn_ucs(n1, n2):
-        return costs_ucs.get((n1,n2), float('inf'))
+        return costs_ucs.get((n1, n2), float("inf"))
 
     path_ucs = ucs(graph, "S", "G", cost_fn_ucs)
     assert path_ucs == ["S", "A", "G"]
@@ -229,15 +247,21 @@ def test_search_complex_graph_ucs_astar():
     # G: cost S->A->G = 1+1=2. h(G,G)=0. Total = 2. Push (2+0, 2, G, [S,A,G])
     # Path [S,A,G] should be found.
     # The continue should be hit for the S->G path if explored later.
-    costs_astar = {("S","A"):1, ("S","B"):1, ("A","G"):1, ("B","G"):1, ("S","G"):10}
-    for (u,v),c in list(costs_astar.items()):
-        costs_astar[(v,u)] = c
+    costs_astar = {
+        ("S", "A"): 1,
+        ("S", "B"): 1,
+        ("A", "G"): 1,
+        ("B", "G"): 1,
+        ("S", "G"): 10,
+    }
+    for (u, v), c in list(costs_astar.items()):
+        costs_astar[(v, u)] = c
 
     def cost_fn_astar(n1, n2):
-        return costs_astar.get((n1,n2), float('inf'))
+        return costs_astar.get((n1, n2), float("inf"))
 
-    def heuristic_fn_astar(n,g):
-        return {"S":1, "A":0, "B":10, "G":0}.get(n, float('inf'))
+    def heuristic_fn_astar(n, g):
+        return {"S": 1, "A": 0, "B": 10, "G": 0}.get(n, float("inf"))
 
     path_astar = a_star(graph, "S", "G", cost_fn_astar, heuristic_fn_astar)
     assert path_astar == ["S", "A", "G"]

@@ -46,7 +46,7 @@ def peers_map(cell_units: Dict[Cell, List[List[Cell]]]) -> Dict[Cell, Set[Cell]]
     """Given a dictionary of cell_units, return a dictionary of peers."""
     peers: Dict[Cell, Set[Cell]] = {}
     # Ensure all cells are initialized in peers dict for consistency
-    for cell in cell_units.keys(): # Initialize all cells from cell_units
+    for cell in cell_units.keys():  # Initialize all cells from cell_units
         peers[cell] = set()
 
     # Then build peers by first adding row and column peers

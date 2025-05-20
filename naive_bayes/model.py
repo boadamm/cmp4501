@@ -5,6 +5,7 @@ import numpy as np
 
 class MultinomialNB:
     """Bare-bones multinomial Naïve Bayes with Laplace smoothing."""
+
     def __init__(self, alpha: float = 1.0) -> None:
         self.alpha = alpha
         self.class_log_prior_: Optional[np.ndarray] = None

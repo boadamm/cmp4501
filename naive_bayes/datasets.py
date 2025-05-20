@@ -16,12 +16,12 @@ def load_toy_data(seed: int = 42) -> Tuple[np.ndarray, ...]:
     n_each = 50
 
     # base rates
-    X_spam  = rng.poisson(0.3, size=(n_each, n_feat))
-    X_ham   = rng.poisson(0.3, size=(n_each, n_feat))
+    X_spam = rng.poisson(0.3, size=(n_each, n_feat))
+    X_ham = rng.poisson(0.3, size=(n_each, n_feat))
 
     # bump class-specific keyword counts
-    X_spam[:, :20]  += rng.poisson(2.0, size=(n_each, 20))   # spam words
-    X_ham[:, 20:40] += rng.poisson(2.0, size=(n_each, 20))   # ham words
+    X_spam[:, :20] += rng.poisson(2.0, size=(n_each, 20))  # spam words
+    X_ham[:, 20:40] += rng.poisson(2.0, size=(n_each, 20))  # ham words
 
     X = np.vstack([X_spam, X_ham])
     y = np.array([1] * n_each + [0] * n_each)

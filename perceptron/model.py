@@ -6,18 +6,18 @@ import numpy as np
 def _sigmoid(z: np.ndarray) -> np.ndarray:
     return 1.0 / (1.0 + np.exp(-z))
 
+
 class Perceptron:
     """
     2-layer feed-forward network:
     input (d) → hidden (h) → sigmoid → output sigmoid (binary).
     """
+
     PREDICTION_THRESHOLD = 0.5
 
-    def __init__(self,
-                 hidden_size: int = 8,
-                 lr: float = 0.1,
-                 epochs: int = 5000,
-                 seed: int = 1):
+    def __init__(
+        self, hidden_size: int = 8, lr: float = 0.1, epochs: int = 5000, seed: int = 1
+    ):
         self.hidden_size = hidden_size
         self.lr = lr
         self.epochs = epochs
@@ -51,7 +51,7 @@ class Perceptron:
             y_hat = _sigmoid(z2)
 
             # gradients (binary cross-entropy simplified to mse derivative)
-            error = y_hat - y                    # shape (n_samples,)
+            error = y_hat - y  # shape (n_samples,)
             dW2 = a1.T @ error / n_samples
             db2 = error.mean()
 

@@ -23,6 +23,7 @@ EASY_PUZZLE = SudokuBoard(
 EXPECTED_ALL_UNITS_LEN = 18
 EXPECTED_PEERS_LEN_FOR_ORIGIN = 12
 
+
 class TestSudokuCSP:
     def test_ac3_consistency(self, domains, peers, all_units):
         # Sanity checks for constraint tables
@@ -59,6 +60,7 @@ class TestSudokuCSP:
 
     def test_search_solver(self, easy_puzzle_domains_after_ac3, peers):
         pass
+
 
 def test_sudoku_solver_returns_valid_solution():
     """Test that solver returns a valid solution preserving initial clues."""
@@ -272,7 +274,7 @@ def test_solve_hard():
             assert set(row) == set(range(1, 7))
         for col in zip(*solution):
             assert set(col) == set(range(1, 7))
-        BOX_H, BOX_W = 2, 3 # Assuming 2x3 boxes
+        BOX_H, BOX_W = 2, 3  # Assuming 2x3 boxes
         for br in range(0, 6, BOX_H):
             for bc in range(0, 6, BOX_W):
                 box = {
@@ -281,15 +283,16 @@ def test_solve_hard():
                     for c in range(bc, bc + BOX_W)
                 }
                 assert box == set(range(1, 7))
-    # else: # If solution is None, the test passes if the puzzle is indeed
-    # unsolvable.
+        # else: # If solution is None, the test passes if the puzzle is indeed
+        # unsolvable.
         # This part requires knowing if the puzzle is solvable.
         # For now, we only check solved state.
         # print(
         #     "Solver returned None for the hard puzzle. "
         #     "This might be correct if it's unsolvable."
         # )
-        pass # Test passes if solver correctly identifies unsolvable or solves it
+        pass  # Test passes if solver correctly identifies unsolvable or solves it
+
 
 # Further tests could include:
 # - A puzzle known to be unsolvable (assert solve returns None)
