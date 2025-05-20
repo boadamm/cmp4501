@@ -1,43 +1,129 @@
-# CMP-4501 Search Algorithms
+# CMP-4501 Machine Learning Algorithms
 
-| Module       | Tests | Coverage |
-|--------------|-------|----------|
-| Search       | ✅    | ≥ 90 %   |
-| Sudoku       | ✅    | ≥ 90 %   |
-| Q-Learning   | ✅    | ≥ 90 %   |
+This repository contains implementations of various machine learning algorithms developed as part of the CMP-4501 course. All modules include unit tests with good coverage, and the codebase is linted and formatted using Ruff.
 
-## Part 1 – Search
+## Table of Contents
 
-This module implements various search algorithms for traversing graphs, including:
+*   [Implemented Algorithms](#implemented-algorithms)
+*   [Prerequisites](#prerequisites)
+*   [Setup](#setup)
+*   [Running Tests](#running-tests)
+*   [Linting and Formatting](#linting-and-formatting)
+*   [Continuous Integration (CI)](#continuous-integration-ci)
+*   [Overall Project Structure](#overall-project-structure)
+*   [Algorithm Details](#algorithm-details)
+    *   [Search](#part-1--search)
+    *   [Constraint Satisfaction (Sudoku)](#part-2--constraint-satisfaction-sudoku)
+    *   [RL (Q-Learning)](#part-2--rl-q-learning)
+    *   [Naïve Bayes](#part-2--naïve-bayes)
+    *   [Decision Tree](#part-3--decision-tree)
+    *   [Perceptron](#part-3--perceptron)
+*   [License](#license)
 
-- Depth-First Search (DFS)
-- Breadth-First Search (BFS)
-- Uniform Cost Search (UCS)
-- A* Search
+## Implemented Algorithms
 
-### Installation
+*   **Search Algorithms:**
+    *   Depth-First Search (DFS)
+    *   Breadth-First Search (BFS)
+    *   Uniform Cost Search (UCS)
+    *   A\* Search
+*   **Constraint Satisfaction:**
+    *   Sudoku Solver (using AC-3 and backtracking search)
+*   **Reinforcement Learning:**
+    *   Q-Learning for GridWorld
+*   **Classification Algorithms:**
+    *   Multinomial Naïve Bayes
+    *   Decision Tree (CART-style)
+    *   Single-Hidden-Layer Perceptron
+
+## Prerequisites
+
+*   **Conda:** This project uses Conda for environment management. Ensure you have Anaconda or Miniconda installed. You can find installation instructions at [conda.io](https://conda.io/).
+
+## Setup
+
+1.  **Create and Activate Conda Environment:**
+    It is recommended to use a Conda environment. If you have Conda installed, create and activate an environment named `cmp4501` (or your preferred name) with Python 3.12 (or a compatible version).
+
+    ```bash
+    conda create -n cmp4501 python=3.12 -y
+    conda activate cmp4501
+    ```
+
+2.  **Install Dependencies:**
+    Once the environment is activated, install the project and its development dependencies:
+
+    ```bash
+    pip install -e .[dev]
+    ```
+
+## Running Tests
+
+To run all unit tests and generate a coverage report:
 
 ```bash
-# Create and activate a virtual environment (recommended)
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+pytest --cov --cov-report=html
+```
+This will also display a summary in the terminal. The HTML report will be saved in the `htmlcov/` directory. The project aims for a test coverage of at least 85%.
 
-# Install development dependencies
-pip install pytest pytest-cov ruff
+## Linting and Formatting
+
+This project uses Ruff for linting and formatting.
+
+*   **Check for linting issues:**
+    ```bash
+    ruff check .
+    ```
+*   **Automatically fix linting issues (where possible):**
+    ```bash
+    ruff check . --fix
+    ```
+*   **Check for formatting issues:**
+    ```bash
+    ruff format . --check
+    ```
+*   **Apply formatting:**
+    ```bash
+    ruff format .
+    ```
+
+## Continuous Integration (CI)
+
+This project uses GitHub Actions for Continuous Integration. The CI pipeline automatically runs on every push and pull request to the main branches. The workflow includes:
+*   Setting up the Python environment.
+*   Installing dependencies.
+*   Running Ruff for linting and formatting checks.
+*   Running Pytest with coverage and failing if coverage is below 85%.
+
+## Overall Project Structure
+
+```
+├── .github/                # GitHub Actions CI workflows
+├── decision_tree/          # Decision Tree algorithm implementation
+├── naive_bayes/            # Naïve Bayes classifier implementation
+├── perceptron/             # Perceptron (neural network) implementation
+├── rl_qlearning/           # Q-Learning algorithm implementation
+├── search/                 # Search algorithms (DFS, BFS, UCS, A*)
+├── sudoku/                 # Sudoku solver (CSP, AC-3, backtracking)
+├── tests/                  # Unit tests for all algorithms
+├── .gitignore              # Specifies intentionally untracked files that Git should ignore
+├── .tool-versions          # (If used) Specifies tool versions (e.g., for asdf)
+├── LICENSE                 # Project license information (MIT License)
+├── pyproject.toml          # Build system requirements and project metadata (PEP 518, PEP 621)
+├── README.md               # This file
+├── setup.py                # (Legacy or for specific cases) Script for building/installing the package
+└── coverage.xml            # Test coverage report (generated by pytest-cov)
 ```
 
-### Testing
+---
 
-```bash
-# Run tests with coverage
-pytest
+## Algorithm Details
 
-# Run style checks
-ruff check .
-```
+### Part 1 – Search
 
-### Project Structure
+This module implements various search algorithms for traversing graphs.
 
+**Project Structure:**
 - `search/`
   - `graph.py`: Graph implementation and grid graph constructor
   - `uninformed.py`: DFS and BFS implementations
@@ -46,37 +132,11 @@ ruff check .
 - `tests/`
   - `test_search.py`: Test cases for all search algorithms
 
-### Development Status
+### Part 2 – Constraint Satisfaction (Sudoku)
 
-The search algorithms are currently stubbed out with TODO comments. The test suite is set up to verify:
+This module implements a 6x6 Sudoku solver using constraint satisfaction techniques: AC-3 constraint propagation and backtracking search.
 
-1. Path validity (starts at start node, ends at goal node)
-2. Path optimality for BFS, UCS, and A*
-3. Search efficiency (explored nodes ≤ graph size)
-
-## Part 2 – Constraint Satisfaction
-
-This module implements a 6x6 Sudoku solver using constraint satisfaction techniques:
-
-- AC-3 constraint propagation
-- Backtracking search with forward checking
-- Minimum Remaining Values (MRV) variable selection
-
-### Testing
-
-```bash
-# Run all tests
-pytest
-
-# Run only Sudoku tests
-pytest -q tests/test_sudoku.py
-
-# Run style checks
-ruff check .
-```
-
-### Project Structure
-
+**Project Structure:**
 - `sudoku/`
   - `board.py`: Sudoku board representation
   - `csp.py`: CSP utilities (constraints, AC-3)
@@ -84,61 +144,30 @@ ruff check .
 - `tests/`
   - `test_sudoku.py`: Test cases for Sudoku solver
 
-### Development Status
-
-The Sudoku solver has a complete test suite but the core algorithms (AC-3, backtracking) are currently stubbed with TODOs. The tests verify:
-
-1. Solution validity (all constraints satisfied)
-2. Preservation of initial clues
-3. Proper handling of row, column, and subgrid constraints
-
-## Part 2 – RL
+### Part 2 – RL (Q-Learning)
 
 This section covers the Q-Learning implementation for a simple GridWorld environment.
 
-### Usage
-
+**Usage:**
 To run a demonstration of the Q-learning agent:
-
 ```bash
 python -m rl_qlearning.demo
 ```
 
-### Project Structure
-
+**Project Structure:**
 - `rl_qlearning/`
   - `__init__.py`: Package initializer.
   - `env.py`: Contains the `GridWorld` environment.
   - `qlearn.py`: Implements the `q_learning` algorithm and `greedy_policy` extraction.
-  - `demo.py`: (To be created) A script to demonstrate the Q-learning agent.
+  - `demo.py`: A script to demonstrate the Q-learning agent.
 - `tests/`
   - `test_qlearning.py`: Test cases for the Q-learning implementation.
 
-### Development Status
-
-The Q-learning module is scaffolded with:
-
-- A `GridWorld` environment (4x4, terminal goal (3,3), step reward -1, goal reward +10).
-- A `q_learning` function stub (Q-table initialized to zeros).
-- A `greedy_policy` function stub.
-- Tests for Q-table shape and a (currently failing) test for policy effectiveness.
-
-### Testing
-
-```bash
-# Run Q-learning tests (ensure pytest is installed)
-pytest -q tests/test_qlearning.py
-
-# Run style checks
-ruff check .
-```
-
-## Part 2 – Naïve Bayes
+### Part 2 – Naïve Bayes
 
 This module implements a Multinomial Naïve Bayes classifier.
 
-### Usage Example (Toy Dataset)
-
+**Usage Example (Toy Dataset):**
 ```python
 from naive_bayes.datasets import load_toy_data
 from naive_bayes.model import MultinomialNB
@@ -156,8 +185,7 @@ accuracy = (y_pred == y_test).mean()
 print(f"Toy dataset accuracy: {accuracy:.2f}")
 ```
 
-### Project Structure
-
+**Project Structure:**
 - `naive_bayes/`
   - `__init__.py`: Package initializer.
   - `datasets.py`: Data loading utilities (e.g., `load_toy_data`).
@@ -165,28 +193,11 @@ print(f"Toy dataset accuracy: {accuracy:.2f}")
 - `tests/`
   - `test_nb.py`: Test cases for the Naïve Bayes classifier.
 
-### Development Status
-
-The Multinomial Naïve Bayes classifier is currently a scaffold.
-Core methods (`__init__`, `fit`, `predict`) are stubbed with `NotImplementedError`.
-Tests are expected to fail until the model is implemented.
-
-### Testing
-
-```bash
-# Run Naïve Bayes tests (ensure pytest is installed)
-pytest -q tests/test_nb.py
-
-# Run style checks
-ruff check .
-```
-
-## Part 3 – Decision Tree
+### Part 3 – Decision Tree
 
 A simple CART-style binary decision tree.
 
-### Usage Example (Toy Dataset)
-
+**Usage Example (Toy Dataset):**
 ```python
 from decision_tree.datasets import load_toy_split
 from decision_tree.tree import DecisionTree
@@ -195,21 +206,20 @@ from decision_tree.tree import DecisionTree
 X_train, y_train, X_test, y_test = load_toy_split()
 
 # Initialize, fit, and predict
-model = DecisionTree(max_depth=3)
+model = DecisionTree(max_depth=3, min_samples_split=5) # Adjusted min_samples_split
 model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
 
 # Evaluate (example)
-# accuracy = (y_pred == y_test).mean()
-# print(f"Toy dataset accuracy: {accuracy:.2f}")
+accuracy = (y_pred == y_test).mean()
+print(f"Toy dataset accuracy: {accuracy:.2f}")
 ```
 
-## Part 3 – Perceptron
+### Part 3 – Perceptron
 
 This module implements a single-hidden-layer perceptron.
 
-### Usage Example (Linear Dataset)
-
+**Usage Example (Linear Dataset):**
 ```python
 from perceptron.datasets import load_linear
 from perceptron.model import Perceptron
@@ -221,14 +231,39 @@ X_train, y_train, X_test, y_test = load_linear()
 # Initialize, fit, and predict
 # Model parameters are for demonstration; they might not be optimal.
 model = Perceptron(hidden_size=6, lr=0.1, epochs=2000, seed=42)
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
 
-# The following lines will raise NotImplementedError until implemented:
-# model.fit(X_train, y_train)
-# y_pred = model.predict(X_test)
-
-# Evaluate (example, uncomment after implementation)
-# accuracy = (y_pred == y_test).mean()
-# print(f"Linear dataset accuracy: {accuracy:.2f}")
-# print(f"Predictions: {y_pred}")
+# Evaluate (example)
+accuracy = (y_pred == y_test).mean()
+print(f"Linear dataset accuracy: {accuracy:.2f}")
+# print(f"Predictions: {y_pred}") # Can be verbose for many predictions
 # print(f"Actual:      {y_test}")
 ```
+
+**XOR Dataset Example:**
+```python
+from perceptron.datasets import load_xor_data
+from perceptron.model import Perceptron
+import numpy as np
+
+# Load data
+X, y = load_xor_data()
+
+# Initialize, fit, and predict
+# A single-hidden-layer perceptron can learn XOR.
+# Parameters here are illustrative.
+model = Perceptron(hidden_size=4, lr=0.1, epochs=5000, seed=1)
+model.fit(X, y) # Train on the full small dataset
+y_pred = model.predict(X) # Predict on the same data
+
+# Evaluate
+accuracy = (y_pred == y).mean()
+print(f"XOR dataset accuracy (trained on full set): {accuracy:.2f}")
+# print(f"XOR Predictions: {y_pred}")
+# print(f"XOR Actual:      {y}")
+```
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
