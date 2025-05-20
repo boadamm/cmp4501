@@ -48,4 +48,23 @@ ignore = []
 
 # Allow unused imports in __init__.py files
 [tool.ruff.lint.per-file-ignores]
-"__init__.py" = ["F401"] 
+"__init__.py" = ["F401"]
+
+[tool.coverage.run]
+source = [
+    "decision_tree",
+    "naive_bayes",
+    "perceptron",
+    "rl_qlearning",
+    "search",
+    "sudoku"
+]
+
+[tool.coverage.report]
+omit = [
+    "*/demo*",
+    "scripts/*",
+    "tests/*",
+    "*__init__.py",
+    "*/datasets.py"
+] 

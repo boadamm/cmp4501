@@ -33,13 +33,7 @@ jobs:
       - name: Run Pytest with Coverage
         run: >-
           pytest -q
-          --cov=decision_tree
-          --cov=naive_bayes
-          --cov=perceptron
-          --cov=rl_qlearning
-          --cov=search
-          --cov=sudoku
-          --cov-omit="*/demo*,scripts/*,tests/*,*__init__.py,*/datasets.py"
+          --cov
           --cov-report=term-missing
           --cov-report=xml
           --cov-fail-under=85 
