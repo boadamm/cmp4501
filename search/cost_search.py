@@ -52,7 +52,11 @@ def ucs(
 
 
 def a_star(
-    graph: Graph, start: str, goal: str, cost_fn: Callable[[str, str], float], heuristic_fn: Callable[[str, str], float]
+    graph: Graph,
+    start: str,
+    goal: str,
+    cost_fn: Callable[[str, str], float],
+    heuristic_fn: Callable[[str, str], float]
 ) -> List[str]:
     """Perform A* Search to find the optimal path from start to goal.
 

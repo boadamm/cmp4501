@@ -2,9 +2,7 @@
 Constraint Satisfaction Problem (CSP) utilities for Sudoku.
 """
 
-from __future__ import annotations
-
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, List, Set
 
 if TYPE_CHECKING:
     from sudoku.grid import Cell
@@ -44,37 +42,18 @@ def all_units(size: int = 6) -> list[list[Cell]]:
     return units
 
 
-def peers_map(units: list[list[Cell]]) -> dict[Cell, set[Cell]]:
-    """Return dictionary mapping each cell to its peer cells (sharing a unit).
-
-    A cell's peers are all other cells in the same row, column, or box.
-    Each cell should have exactly 12 peers in a 6x6 Sudoku:
-    - 5 from its row
-    - 5 from its column
-    - 2 from its box (not already counted from row/column)
-
-    Args:
-        units (list[list[Cell]]): A list of all units (rows, columns, boxes).
-
-    Returns:
-        dict[Cell, set[Cell]]: A dictionary mapping each cell to a set of its
-                               peer cells.
-    """
-    peers: dict[Cell, set[Cell]] = {}
-
-    # First, identify which units each cell belongs to
-    cell_units: dict[Cell, list[list[Cell]]] = {}
-    for unit in units:
-        for cell in unit:
-            if cell not in cell_units:
-                cell_units[cell] = []
-            cell_units[cell].append(unit)
+def peers_map(cell_units: Dict[Cell, List[List[Cell]]]) -> Dict[Cell, Set[Cell]]:
+    """Given a dictionary of cell_units, return a dictionary of peers."""
+    peers: Dict[Cell, Set[Cell]] = {}
+    # Ensure all cells are initialized in peers dict for consistency
+    for cell in cell_units.keys(): # Initialize all cells from cell_units
+        peers[cell] = set()
 
     # Then build peers by first adding row and column peers
-    for cell in cell_units:
-        peers[cell] = set()
+    for cell, units_for_cell in cell_units.items():
+        # peers[cell] = set() # Already initialized above
         # Find the units this cell belongs to
-        for unit in cell_units[cell]:
+        for unit in units_for_cell:
             # Add all cells from this unit except the cell itself
             peers[cell].update(c for c in unit if c != cell)
 

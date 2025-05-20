@@ -9,6 +9,8 @@ from search.graph import Graph, grid_graph
 from search.heuristics import manhattan
 from search.uninformed import bfs, dfs
 
+MAX_EXPLORED_IN_4X4_GRID = 16
+
 
 @pytest.fixture
 def grid_4x4() -> Graph:
@@ -84,7 +86,7 @@ def test_explored_nodes_limit(grid_4x4: Graph, algorithm, monkeypatch):
     start, goal = "0,0", "3,3"
     explored = count_explored_nodes(monkeypatch, grid_4x4, algorithm, start, goal)
 
-    assert explored <= 16  # 4x4 grid has 16 nodes
+    assert explored <= MAX_EXPLORED_IN_4X4_GRID  # 4x4 grid has 16 nodes
 
 
 @pytest.mark.parametrize(
@@ -118,11 +120,15 @@ def test_cost_search_no_path_found():
     graph = Graph()
     graph.add_edge("A", "B")
     graph.add_edge("C", "D")
-    cost_fn = lambda n1, n2: 1.0
-    heuristic_fn = lambda n1, n2: 0.0
 
-    assert ucs(graph, "A", "D", cost_fn) == []
-    assert a_star(graph, "A", "D", cost_fn, heuristic_fn) == []
+    def cost_fn_ucs_no_path(n1, n2):
+        return 1.0
+
+    def heuristic_fn_ucs_no_path(n1, n2):
+        return 0.0
+
+    assert ucs(graph, "A", "D", cost_fn_ucs_no_path) == []
+    assert a_star(graph, "A", "D", cost_fn_ucs_no_path, heuristic_fn_ucs_no_path) == []
 
 
 def test_cost_search_skip_suboptimal_path():
@@ -138,11 +144,16 @@ def test_cost_search_skip_suboptimal_path():
     # S->A (1), S->B (1), A->G (1), B->G(100)
     # S->G (10) but added to frontier later than S->A and S->B might explore it
     # We want to ensure S->A->G (cost 2) is chosen over S->G (cost 10)
-    # and also that if G is reached via S->B->G (cost 101) it's ignored if S->A->G (2) found
+    # and also that if G is reached via S->B->G (cost 101) it's ignored
+    # if S->A->G (2) found
     costs_ucs = {("S","A"):1, ("S","B"):1, ("A","G"):1, ("B","G"):100, ("S","G"):10}
     # Symmetric for graph.py's undirected edges
-    for (u,v),c in list(costs_ucs.items()): costs_ucs[(v,u)] = c
-    cost_fn_ucs = lambda n1, n2: costs_ucs.get((n1,n2), float('inf'))
+    for (u,v),c in list(costs_ucs.items()):
+        costs_ucs[(v,u)] = c
+
+    def cost_fn_ucs(n1, n2):
+        return costs_ucs.get((n1,n2), float('inf'))
+
     path_ucs = ucs(graph, "S", "G", cost_fn_ucs)
     assert path_ucs == ["S", "A", "G"]
 
@@ -158,10 +169,75 @@ def test_cost_search_skip_suboptimal_path():
     # G: cost S->G = 10. h(G,G)=0. Total S->G = 10. Push (10+0, 10, G, [S,G])
     # Pop A: Neighbors S, G
     # G: cost S->A->G = 1+1=2. h(G,G)=0. Total = 2. Push (2+0, 2, G, [S,A,G])
-    # Path [S,A,G] should be found. The continue should be hit for the S->G path if explored later.
+    # Path [S,A,G] should be found.
+    # The continue should be hit for the S->G path if explored later.
     costs_astar = {("S","A"):1, ("S","B"):1, ("A","G"):1, ("B","G"):1, ("S","G"):10}
-    for (u,v),c in list(costs_astar.items()): costs_astar[(v,u)] = c
-    cost_fn_astar = lambda n1, n2: costs_astar.get((n1,n2), float('inf'))
-    heuristic_fn_astar = lambda n,g: {"S":1, "A":0, "B":10, "G":0}.get(n, float('inf'))
+    for (u,v),c in list(costs_astar.items()):
+        costs_astar[(v,u)] = c
+
+    def cost_fn_astar(n1, n2):
+        return costs_astar.get((n1,n2), float('inf'))
+
+    def heuristic_fn_astar(n,g):
+        # Heuristic values for A* an example
+        heuristic_values = {"S":1, "A":0, "B":10, "G":0}
+        return heuristic_values.get(n, float('inf'))
+
+    path_astar = a_star(graph, "S", "G", cost_fn_astar, heuristic_fn_astar)
+    assert path_astar == ["S", "A", "G"]
+
+
+def test_search_complex_graph_ucs_astar():
+    """Test UCS and A* on a more complex graph with specific costs/heuristics."""
+    graph = Graph()
+    nodes = ["S", "A", "B", "C", "D", "G"]
+    for node in nodes:
+        graph.add_node(node)
+    # Edges for UCS and A*
+    # UCS: S->A(1), S->B(1), A->G(1), B->G(100), S->G(10)
+    # Optimal UCS: S->A->G (cost 2)
+    # A*: S->A(1), S->B(1), A->G(1), B->G(1), S->G(10)
+    # Heuristic h(S,G)=1, h(A,G)=0, h(B,G)=10, h(G,G)=0 (underestimate for B->G)
+    # Optimal A*: S->A->G (cost 2, total f=2+0=2)
+    # Path S->B->G (cost 2, total f=2+0=2) might be found first if
+    # tie-broken by path length
+    # Path S->G (cost 10, total f=10+0=10)
+
+    # S->G (10) but added to frontier later than S->A and S->B might explore it
+    # We want to ensure S->A->G (cost 2) is chosen over S->G (cost 10)
+    # and also that if G is reached via S->B->G (cost 101) it's ignored
+    # if S->A->G (2) found
+    costs_ucs = {("S","A"):1, ("S","B"):1, ("A","G"):1, ("B","G"):100, ("S","G"):10}
+    # Symmetric for graph.py's undirected edges
+    for (u,v),c in list(costs_ucs.items()):
+        costs_ucs[(v,u)] = c
+
+    def cost_fn_ucs(n1, n2):
+        return costs_ucs.get((n1,n2), float('inf'))
+
+    path_ucs = ucs(graph, "S", "G", cost_fn_ucs)
+    assert path_ucs == ["S", "A", "G"]
+
+    # A* Test
+    # Frontier: (f, cost, node, path)
+    # Start S: Push (1+1, 0, S, [S])
+    # Pop S: Neighbors A, B, G
+    # A: cost S->A = 1. h(A,G)=0. Total = 1. Push (1+0, 1, A, [S,A])
+    # B: cost S->B = 1. h(B,G)=10. Total = 11. Push (1+10, 1, B, [S,B])
+    # G: cost S->G = 10. h(G,G)=0. Total = 10. Push (10+0, 10, G, [S,G])
+    # Pop A: Neighbors S, G
+    # G: cost S->A->G = 1+1=2. h(G,G)=0. Total = 2. Push (2+0, 2, G, [S,A,G])
+    # Path [S,A,G] should be found.
+    # The continue should be hit for the S->G path if explored later.
+    costs_astar = {("S","A"):1, ("S","B"):1, ("A","G"):1, ("B","G"):1, ("S","G"):10}
+    for (u,v),c in list(costs_astar.items()):
+        costs_astar[(v,u)] = c
+
+    def cost_fn_astar(n1, n2):
+        return costs_astar.get((n1,n2), float('inf'))
+
+    def heuristic_fn_astar(n,g):
+        return {"S":1, "A":0, "B":10, "G":0}.get(n, float('inf'))
+
     path_astar = a_star(graph, "S", "G", cost_fn_astar, heuristic_fn_astar)
     assert path_astar == ["S", "A", "G"]

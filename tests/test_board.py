@@ -2,6 +2,7 @@ import pytest
 
 from sudoku.board import SudokuBoard
 
+MIN_BOARD_STR_LEN = 10
 
 def test_board_copy_and_solved():
     grid = [[1,2,3,4,5,6],
@@ -23,7 +24,7 @@ def test_board_copy_and_solved():
 def test_board_str():
     board = SudokuBoard([[None]*6 for _ in range(6)])
     s = str(board)
-    assert isinstance(s, str) and len(s) > 10
+    assert isinstance(s, str) and len(s) > MIN_BOARD_STR_LEN
 
 def test_board_invalid_dimensions():
     """Test SudokuBoard initialization with invalid dimensions."""
@@ -39,13 +40,25 @@ def test_board_invalid_cell_values():
     """Test SudokuBoard initialization with invalid cell values."""
     grid = [[None]*6 for _ in range(6)]
     grid[0][0] = 7 # Invalid symbol (7 not in 1-6)
-    with pytest.raises(ValueError, match=r"Cells must be None or integers in \(1, 2, 3, 4, 5, 6\)"):
+    with pytest.raises(
+        ValueError, match=r"Cells must be None or integers in \(1, 2, 3, 4, 5, 6\)"
+    ):
         SudokuBoard(grid)
 
     grid[0][0] = 0 # Invalid symbol (0 not in 1-6)
-    with pytest.raises(ValueError, match=r"Cells must be None or integers in \(1, 2, 3, 4, 5, 6\)"):
+    with pytest.raises(
+        ValueError, match=r"Cells must be None or integers in \(1, 2, 3, 4, 5, 6\)"
+    ):
         SudokuBoard(grid)
 
     grid[0][0] = "a" # Invalid type
-    with pytest.raises(ValueError, match=r"Cells must be None or integers in \(1, 2, 3, 4, 5, 6\)"):
+    with pytest.raises(
+        ValueError, match=r"Cells must be None or integers in \(1, 2, 3, 4, 5, 6\)"
+    ):
         SudokuBoard(grid)
+
+def test_board_representation():
+    # For 6x6 board, string representation should be non-trivial
+    board = SudokuBoard([[None]*6 for _ in range(6)])
+    s = str(board)
+    assert isinstance(s, str) and len(s) > MIN_BOARD_STR_LEN

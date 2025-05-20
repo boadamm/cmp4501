@@ -2,6 +2,7 @@ from typing import Optional
 
 import numpy as np
 
+
 def _sigmoid(z: np.ndarray) -> np.ndarray:
     return 1.0 / (1.0 + np.exp(-z))
 
@@ -10,6 +11,8 @@ class Perceptron:
     2-layer feed-forward network:
     input (d) → hidden (h) → sigmoid → output sigmoid (binary).
     """
+    PREDICTION_THRESHOLD = 0.5
+
     def __init__(self,
                  hidden_size: int = 8,
                  lr: float = 0.1,
@@ -70,4 +73,4 @@ class Perceptron:
         z2 = a1 @ self.W2 + self.b2
         probs = _sigmoid(z2)
         # TODO: Consider replacing 0.5 with a named constant
-        return (probs >= 0.5).astype(int)
+        return (probs >= self.PREDICTION_THRESHOLD).astype(int)
