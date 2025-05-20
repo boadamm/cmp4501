@@ -1,5 +1,7 @@
+LICENSE
 README.md
 pyproject.toml
+setup.py
 cmp4501.egg-info/PKG-INFO
 cmp4501.egg-info/SOURCES.txt
 cmp4501.egg-info/dependency_links.txt
@@ -10,4 +12,9 @@ search/cost_search.py
 search/graph.py
 search/heuristics.py
 search/uninformed.py
+sudoku/__init__.py
+sudoku/board.py
+sudoku/csp.py
+sudoku/solver.py
 tests/test_search.py
+tests/test_sudoku.py

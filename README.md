@@ -47,3 +47,41 @@ The search algorithms are currently stubbed out with TODO comments. The test sui
 1. Path validity (starts at start node, ends at goal node)
 2. Path optimality for BFS, UCS, and A*
 3. Search efficiency (explored nodes ≤ graph size)
+
+## Part 2 – Constraint Satisfaction
+
+This module implements a 6x6 Sudoku solver using constraint satisfaction techniques:
+
+- AC-3 constraint propagation
+- Backtracking search with forward checking
+- Minimum Remaining Values (MRV) variable selection
+
+### Testing
+
+```bash
+# Run all tests
+pytest
+
+# Run only Sudoku tests
+pytest -q tests/test_sudoku.py
+
+# Run style checks
+ruff check .
+```
+
+### Project Structure
+
+- `sudoku/`
+  - `board.py`: Sudoku board representation
+  - `csp.py`: CSP utilities (constraints, AC-3)
+  - `solver.py`: Backtracking search implementation
+- `tests/`
+  - `test_sudoku.py`: Test cases for Sudoku solver
+
+### Development Status
+
+The Sudoku solver has a complete test suite but the core algorithms (AC-3, backtracking) are currently stubbed with TODOs. The tests verify:
+
+1. Solution validity (all constraints satisfied)
+2. Preservation of initial clues
+3. Proper handling of row, column, and subgrid constraints

@@ -2,4 +2,10 @@ Metadata-Version: 2.4
 Name: cmp4501
 Version: 0.0.0
 Summary: CMP-4501 Part-1 algorithms
+License-File: LICENSE
 Requires-Dist: numpy>=1.26
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0; extra == "dev"
+Requires-Dist: pytest-cov>=4.1; extra == "dev"
+Requires-Dist: ruff>=0.2; extra == "dev"
+Dynamic: license-file
