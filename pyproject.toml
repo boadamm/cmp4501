@@ -10,4 +10,11 @@ build-backend = "setuptools.build_meta"
 name = "cmp4501"
 version = "0.0.0"
 description = "CMP-4501 Part-1 algorithms"
-dependencies = ["numpy>=1.26"] 
+dependencies = ["numpy>=1.26"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=4.1",
+    "ruff>=0.2"
+] 
