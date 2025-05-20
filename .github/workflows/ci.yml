@@ -9,6 +9,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install -e .[dev]
+      - run: pip install -e .[dev] numpy
       - run: ruff check .
-      - run: pytest --cov=search --cov-report=term --cov-fail-under=90 
+      - run: pytest --cov=search --cov-report=term --cov-fail-under=90
+      - run: pytest -q --cov=search --cov=sudoku --cov=rl_qlearning --cov-report=xml 

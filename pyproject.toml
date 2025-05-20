@@ -1,20 +1,51 @@
-[tool.ruff]
-target-version = "py312"
-line-length = 100
-
 [build-system]
-requires = ["setuptools>=69", "wheel"]
+requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "cmp4501"
-version = "0.0.0"
-description = "CMP-4501 Part-1 algorithms"
-dependencies = ["numpy>=1.26"]
+name = "cmp4501_rl"
+version = "0.1.0"
+description = "Q-Learning module for CMP-4501 Part 2-A"
+authors = [{ name = "Your Name", email = "you@example.com" }] # Please update
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License", # Or your chosen license
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "numpy",
+]
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=8.0",
-    "pytest-cov>=4.1",
-    "ruff>=0.2"
-] 
+    "pytest",
+    "pytest-cov",
+    "ruff",
+]
+
+[tool.setuptools.packages.find]
+where = ["."] # searches in the current directory
+include = ["rl_qlearning*"] # include rl_qlearning and its submodules
+exclude = ["tests*"] # exclude tests directory from being a top-level package
+
+[tool.pytest.ini_options]
+pythonpath = [
+  ".", 
+  "rl_qlearning"
+]
+testpaths = [
+    "tests",
+]
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "PL", "RUF"]
+ignore = []
+
+# Allow unused imports in __init__.py files
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"] 
