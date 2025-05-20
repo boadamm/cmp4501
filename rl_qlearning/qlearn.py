@@ -11,6 +11,7 @@ def q_learning(
     gamma: float = 0.9,
     epsilon: float = 0.1,
     episodes: int = 5000,
+    log_returns: bool = False,
 ) -> np.ndarray:
     """Perform tabular Q-learning to find the optimal Q-function.
 
@@ -21,17 +22,22 @@ def q_learning(
         epsilon (float, optional): Exploration rate for epsilon-greedy policy.
                                  Defaults to 0.1.
         episodes (int, optional): Number of episodes to train for. Defaults to 5000.
+        log_returns (bool, optional): Whether to log cumulative returns per episode.
+                                      Defaults to False.
 
     Returns:
         np.ndarray: The learned Q-table, a 2D array of shape (n_states, n_actions).
+                    If log_returns is True, also returns a list of cumulative rewards.
     """
     n_states, n_actions = env.size**2, len(ACTION_SPACE)
     Q = np.zeros((n_states, n_actions))
+    returns_log = []
 
     rng = np.random.default_rng()
-    for _ in range(episodes):
+    for episode in range(episodes):
         s = env.reset()
         done = False
+        cumulative_reward = 0
         while not done:
             # ε-greedy
             if rng.random() < epsilon:
@@ -41,6 +47,12 @@ def q_learning(
             s_next, r, done = env.step(a)
             Q[s, a] += alpha * (r + gamma * np.max(Q[s_next]) - Q[s, a])
             s = s_next
+            cumulative_reward += r
+        if log_returns:
+            returns_log.append(cumulative_reward)
+
+    if log_returns:
+        return Q, returns_log
     return Q
 
 

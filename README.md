@@ -264,6 +264,14 @@ print(f"XOR dataset accuracy (trained on full set): {accuracy:.2f}")
 # print(f"XOR Actual:      {y}")
 ```
 
+### Figures
+
+- [Grid search node expansions](figures/search_nodes.png)
+
+```bash
+bash scripts/run_all_plots.sh
+```
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
