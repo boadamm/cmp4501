@@ -17,3 +17,13 @@ def load_linear(seed: int = 24) -> Tuple[np.ndarray, ...]:
     X, y = X[idx], y[idx]
     split = 80
     return X[:split], y[:split], X[split:], y[split:]
+
+
+def load_xor_data() -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Generates the XOR dataset.
+    Returns X, y.
+    """
+    X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]], dtype=float)
+    y = np.array([0, 1, 1, 0], dtype=float)
+    return X, y

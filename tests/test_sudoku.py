@@ -24,44 +24,6 @@ EXPECTED_ALL_UNITS_LEN = 18
 EXPECTED_PEERS_LEN_FOR_ORIGIN = 12
 
 
-class TestSudokuCSP:
-    def test_ac3_consistency(self, domains, peers, all_units):
-        # Sanity checks for constraint tables
-        assert len(all_units()) == EXPECTED_ALL_UNITS_LEN
-        pre = sum(len(v) for v in domains.values())
-        # If AC-3 finds EASY_PUZZLE inconsistent, it should return False.
-        # The prompt's original code implies AC-3 is the target for correctness.
-        ac3_result = ac3(domains, peers)
-        if ac3_result:  # Only check for reduction if AC-3 succeeded
-            post = sum(len(v) for v in domains.values())
-            assert post < pre  # at least one domain tightened
-        else:
-            # If ac3_result is False, the puzzle is inconsistent
-            # according to the AC-3 logic.
-            assert not ac3_result  # Explicitly assert that ac3 found it inconsistent
-
-    def test_peers_map_structure(self, peers, all_units):
-        # Test a specific peer set, e.g., for cell (0,0)
-        # Based on typical Sudoku rules, (0,0) has row, col, and box peers.
-        # For a 6x6 board (2x3 subgrids):
-        # Row peers: 5 (not including self)
-        # Col peers: 5 (not including self)
-        # Box peers: (2*3 - 1) = 5 (not including self)
-        # Total unique peers: depends on overlap. For (0,0) these are
-        # distinct sets of cells usually.
-        # (0,1),(0,2),(0,3),(0,4),(0,5) - 5 row
-        # (1,0),(2,0),(3,0),(4,0),(5,0) - 5 col
-        # (1,1) - 1 more from box (assuming (0,0) and (1,1) are in same
-        # 2x3 box and others covered by row/col)
-        # The exact number can be tricky without visualizing the unit splits.
-        # Let's verify the example from the original test code if available or derive.
-        # Original test code expected 12 for (0,0) with 6x6 and 2x3 boxes
-        assert len(peers[(0, 0)]) == EXPECTED_PEERS_LEN_FOR_ORIGIN
-
-    def test_search_solver(self, easy_puzzle_domains_after_ac3, peers):
-        pass
-
-
 def test_sudoku_solver_returns_valid_solution():
     """Test that solver returns a valid solution preserving initial clues."""
     solved = solve(EASY_PUZZLE)

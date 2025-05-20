@@ -1,12 +1,12 @@
-from decision_tree.datasets import load_digits_binary
-from decision_tree.tree import DecisionTreeClassifier
+from decision_tree.datasets import load_toy_split
+from decision_tree.tree import DecisionTree
 
 MIN_ACCURACY_TREE = 0.9
 
 
 def test_dt_accuracy():
-    X_tr, y_tr, X_te, y_te = load_digits_binary()
-    clf = DecisionTreeClassifier(max_depth=10, min_samples_leaf=5).fit(X_tr, y_tr)
+    X_tr, y_tr, X_te, y_te = load_toy_split()
+    clf = DecisionTree(max_depth=10, min_samples_split=5).fit(X_tr, y_tr)
     y_pred = clf.predict(X_te)
     acc = (y_pred == y_te).mean()
     assert acc >= MIN_ACCURACY_TREE

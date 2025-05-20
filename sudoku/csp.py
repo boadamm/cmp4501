@@ -2,7 +2,7 @@
 Constraint Satisfaction Problem (CSP) utilities for Sudoku.
 """
 
-from typing import TYPE_CHECKING, Dict, List, Set
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from sudoku.grid import Cell
@@ -42,21 +42,35 @@ def all_units(size: int = 6) -> list[list[Cell]]:
     return units
 
 
-def peers_map(cell_units: Dict[Cell, List[List[Cell]]]) -> Dict[Cell, Set[Cell]]:
-    """Given a dictionary of cell_units, return a dictionary of peers."""
-    peers: Dict[Cell, Set[Cell]] = {}
-    # Ensure all cells are initialized in peers dict for consistency
-    for cell in cell_units.keys():  # Initialize all cells from cell_units
+def peers_map(units: list[list[Cell]]) -> dict[Cell, set[Cell]]:
+    """Return dictionary mapping each cell to its peer cells (sharing a unit).
+
+    A cell's peers are all other cells in the same row, column, or box.
+
+    Args:
+        units (list[list[Cell]]): A list of all units (rows, columns, boxes).
+
+    Returns:
+        dict[Cell, set[Cell]]: A dictionary mapping each cell to a set of its
+                               peer cells.
+    """
+    peers: dict[Cell, set[Cell]] = {}
+
+    # First, identify which units each cell belongs to
+    cell_to_units_map: dict[Cell, list[list[Cell]]] = {}
+    for unit in units:
+        for cell in unit:
+            if cell not in cell_to_units_map:
+                cell_to_units_map[cell] = []
+            cell_to_units_map[cell].append(unit)
+
+    # Then build peers using the cell_to_units_map
+    for cell, units_for_this_cell in cell_to_units_map.items():
         peers[cell] = set()
-
-    # Then build peers by first adding row and column peers
-    for cell, units_for_cell in cell_units.items():
-        # peers[cell] = set() # Already initialized above
-        # Find the units this cell belongs to
-        for unit in units_for_cell:
-            # Add all cells from this unit except the cell itself
-            peers[cell].update(c for c in unit if c != cell)
-
+        for unit in units_for_this_cell:
+            for peer_cell in unit:
+                if peer_cell != cell:
+                    peers[cell].add(peer_cell)
     return peers
 
 
