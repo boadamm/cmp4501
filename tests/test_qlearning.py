@@ -2,7 +2,11 @@ import numpy as np
 import pytest
 
 from rl_qlearning.env import ACTION_SPACE, GridWorld
-from rl_qlearning.qlearn import greedy_policy, q_learning
+from rl_qlearning.qlearn import (
+    QLearningHyperparameters,
+    greedy_policy,
+    q_learning,
+)
 
 
 @pytest.fixture
@@ -17,7 +21,8 @@ def q_table_learned(env: GridWorld) -> np.ndarray:
     for tests to pass."""
     # Episodes might need adjustment depending on the Q-learning
     # implementation's efficiency
-    return q_learning(env, episodes=5000, alpha=0.1, epsilon=0.1)
+    params = QLearningHyperparameters(episodes=5000, alpha=0.1, epsilon=0.1)
+    return q_learning(env, params=params)
 
 
 def test_q_table_shape(q_table_learned: np.ndarray, env: GridWorld):

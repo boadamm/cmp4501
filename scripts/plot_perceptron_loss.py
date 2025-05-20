@@ -10,14 +10,16 @@ from perceptron.model import (
 
 X_tr, y_tr, _, _ = load_linear()
 losses = []
+
+
 class PerceptronLog(Perceptron):
     def fit(self, X, y):
         n_samples, n_feat = X.shape
         # Xavier init
         # Ensure self.rng is initialized if not done by super().__init__
-        if not hasattr(self, 'rng') or self.rng is None:
+        if not hasattr(self, "rng") or self.rng is None:
             # This is a fallback, ideally Perceptron.__init__ handles rng setup
-            self.rng = np.random.default_rng(getattr(self, 'seed', None))
+            self.rng = np.random.default_rng(getattr(self, "seed", None))
 
         limit1 = np.sqrt(6 / (n_feat + self.hidden_size))
         self.W1 = self.rng.uniform(-limit1, limit1, (n_feat, self.hidden_size))
@@ -28,7 +30,7 @@ class PerceptronLog(Perceptron):
         self.b2 = 0.0
 
         y_true_float = y.astype(float)
-        self.losses = [] # Initialize losses list
+        self.losses = []  # Initialize losses list
 
         for _ in range(self.epochs):
             # forward
@@ -38,7 +40,7 @@ class PerceptronLog(Perceptron):
             y_hat = _sigmoid(z2)
 
             # Calculate MSE loss
-            mse = np.mean((y_hat - y_true_float)**2)
+            mse = np.mean((y_hat - y_true_float) ** 2)
             self.losses.append(mse)
 
             # gradients (binary cross-entropy simplified to mse derivative)
@@ -56,6 +58,7 @@ class PerceptronLog(Perceptron):
             self.W1 -= self.lr * dW1
             self.b1 -= self.lr * db1
         return self
+
 
 # Helper sigmoid function if not accessible from base class Perceptron
 # This might be needed if _sigmoid is a private member of Perceptron

@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import List
 
 import numpy as np
@@ -5,23 +6,26 @@ import numpy as np
 from .env import ACTION_SPACE, GridWorld
 
 
+@dataclass
+class QLearningHyperparameters:
+    alpha: float = 0.1
+    gamma: float = 0.9
+    epsilon: float = 0.1
+    episodes: int = 5000
+
+
 def q_learning(
     env: GridWorld,
-    alpha: float = 0.1,
-    gamma: float = 0.9,
-    epsilon: float = 0.1,
-    episodes: int = 5000,
+    params: QLearningHyperparameters = QLearningHyperparameters(),
     log_returns: bool = False,
 ) -> np.ndarray:
     """Perform tabular Q-learning to find the optimal Q-function.
 
     Args:
         env (GridWorld): The environment to learn from.
-        alpha (float, optional): Learning rate. Defaults to 0.1.
-        gamma (float, optional): Discount factor. Defaults to 0.9.
-        epsilon (float, optional): Exploration rate for epsilon-greedy policy.
-                                 Defaults to 0.1.
-        episodes (int, optional): Number of episodes to train for. Defaults to 5000.
+        params (QLearningHyperparameters, optional):
+            Hyperparameters for Q-learning.
+            Defaults to `QLearningHyperparameters()`.
         log_returns (bool, optional): Whether to log cumulative returns per episode.
                                       Defaults to False.
 
@@ -34,18 +38,18 @@ def q_learning(
     returns_log = []
 
     rng = np.random.default_rng()
-    for episode in range(episodes):
+    for episode in range(params.episodes):
         s = env.reset()
         done = False
         cumulative_reward = 0
         while not done:
             # ε-greedy
-            if rng.random() < epsilon:
+            if rng.random() < params.epsilon:
                 a = rng.integers(n_actions)
             else:
                 a = int(np.argmax(Q[s]))
             s_next, r, done = env.step(a)
-            Q[s, a] += alpha * (r + gamma * np.max(Q[s_next]) - Q[s, a])
+            Q[s, a] += params.alpha * (r + params.gamma * np.max(Q[s_next]) - Q[s, a])
             s = s_next
             cumulative_reward += r
         if log_returns:

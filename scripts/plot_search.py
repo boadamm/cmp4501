@@ -4,17 +4,23 @@ BFS vs A* — pop-count with explicit Manhattan heuristic.
 Outputs: figures/search_nodes.png
 """
 
-import matplotlib.pyplot as plt
-from collections import deque
 import heapq
+from collections import deque
+
+import matplotlib.pyplot as plt
+
 from search.graph import grid_graph
+
 
 def manhattan_lambda(goal_row: int, goal_col: int):
     """Return h(n) that parses 'r,c' → Manhattan to goal."""
+
     def h(node: str) -> int:
         r, c = map(int, node.split(","))
         return abs(goal_row - r) + abs(goal_col - c)
+
     return h
+
 
 def bfs_expansions(graph, start: str, goal: str) -> int:
     frontier, explored, count = deque([start]), set(), 0
@@ -32,6 +38,7 @@ def bfs_expansions(graph, start: str, goal: str) -> int:
                 parent[nbr] = node
                 frontier.append(nbr)
     return count
+
 
 def astar_expansions(graph, start: str, goal: str) -> int:
     goal_r, goal_c = map(int, goal.split(","))
@@ -56,10 +63,11 @@ def astar_expansions(graph, start: str, goal: str) -> int:
                 heapq.heappush(frontier, (new_g + h(nbr), new_g, nbr))
     return count
 
+
 sizes, bfs_nodes, astar_nodes = [], [], []
 for n in range(5, 26, 5):
     g = grid_graph(n, n)
-    s, t = "0,0", f"{n-1},0"
+    s, t = "0,0", f"{n - 1},0"
     sizes.append(n)
     bfs_nodes.append(bfs_expansions(g, s, t))
     astar_nodes.append(astar_expansions(g, s, t))
