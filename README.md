@@ -1,4 +1,4 @@
-# CMP-4501 Machine Learning Algorithms
+Machine Learning Algorithms
 
 This repository contains implementations of various machine learning algorithms developed as part of the CMP-4501 course. All modules include unit tests with good coverage, and the codebase is linted and formatted using Ruff.
 
